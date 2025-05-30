@@ -1,0 +1,83 @@
+// toast types
+export const ERROR = "ERROR";
+export const SUCCESS = "SUCCESS";
+export const INFO = "INFO";
+export const WARNING = "WARNING";
+export const DEFAULT = "DEFAULT";
+
+// modal types
+export const CREATE_SPACE_MODAL = "CREATE_SPACE_MODAL";
+export const CREATE_BOARD_MODAL = "CREATE_BOARD_MODAL";
+export const INVITE_SPACE_MEMBER_MODAL = "INVITE_SPACE_MEMBER_MODAL";
+export const CONFIRM_LEAVE_SPACE_MODAL = "CONFIRM_LEAVE_SPACE_MODAL";
+export const CONFIRM_REMOVE_SPACE_MEMBER_MODAL =
+  "CONFIRM_REMOVE_SPACE_MEMBER_MODAL";
+export const CONFIRM_DELETE_SPACE_MODAL = "CONFIRM_DELETE_SPACE_MODAL";
+export const CONFIRM_DELETE_BOARD_MODAL = "CONFIRM_DELETE_BOARD_MODAL";
+export const CONFIRM_LEAVE_BOARD_MODAL = "CONFIRM_LEAVE_BOARD_MODAL";
+export const CONFIRM_REMOVE_BOARD_MEMBER_MODAL =
+  "CONFIRM_REMOVE_BOARD_MEMBER_MODAL";
+export const CARD_DETAIL_MODAL = "CARD_DETAIL_MODAL";
+export const BOARD_LABEL_MODAL = "BOARD_LABEL_MODAL";
+
+// types
+export const SPACE = "SPACE";
+export const BOARD = "BOARD";
+
+// SPACE ROLES
+export const SPACE_ROLES = {
+  ADMIN: "ADMIN",
+  NORMAL: "NORMAL",
+  GUEST: "GUEST",
+};
+
+// SPACE ROLES
+export const BOARD_ROLES = {
+  ADMIN: "ADMIN",
+  NORMAL: "NORMAL",
+  OBSERVER: "OBSERVER",
+};
+
+// BOARD VISIBILITY TYPES
+export const BOARD_VISIBILITY_TYPES = {
+  PUBLIC: "PUBLIC",
+  PRIVATE: "PRIVATE",
+};
+
+// BOARD BG COLORS
+export const BOARD_COLORS = [
+  "#cdb4db",
+  "#ffafcc",
+  "#a2d2ff",
+  "#ff595e",
+  "#ffca3a",
+  "#90be6d",
+];
+
+export const LABEL_COLORS = [
+  "#61BD4F",
+  "#F1D737",
+  "#FA9F2E",
+  "#EB5A46",
+  "#C377E0",
+  "#0079BF",
+  "#3BC3E0",
+];
+
+// LIST POSSIBLE DRAGS
+export const LIST_POSSIBLE_DRAGS = {
+  LEFT: "LEFT",
+  RIGHT: "RIGHT",
+};
+
+// CARD POSSIBLE DRAGS
+export const CARD_POSSIBLE_DRAGS = {
+  DOWN: "DOWN",
+  UP: "UP",
+};
+
+// DUE DATE STATUSES
+export const DUE_DATE_STATUSES = {
+  OVERDUE: "OVERDUE",
+  COMPLETE: "COMPLETE",
+};
