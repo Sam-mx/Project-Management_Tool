@@ -1,13 +1,13 @@
-FROM node:17-alpine
+FROM node:18-alpine
 
 WORKDIR /server
 
-COPY package.json .
+COPY package.json ./
 
-RUN yarn install
+RUN npm install --legacy-peer-deps
 
 COPY . .
 
 EXPOSE 8000
 
-CMD ["yarn", "start"]
+CMD ["npm", "start"]

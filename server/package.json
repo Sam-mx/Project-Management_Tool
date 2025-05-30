@@ -2,7 +2,7 @@
   "name": "server",
   "version": "1.0.0",
   "main": "app.ts",
-  "author": "ak",
+  "author": "Sam",
   "license": "MIT",
   "scripts": {
     "start": "ts-node --transpile-only app.ts",

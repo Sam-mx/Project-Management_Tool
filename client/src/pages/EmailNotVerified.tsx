@@ -53,8 +53,8 @@ const EmailNotVerified = () => {
           Verify your Email
         </h3>
         <p className="mb-4">
-          To use Workflow, click the verification link your email. This helps
-          keep your account secure.
+          To use Sam - Project Management Tool, click the verification link your
+          email. This helps keep your account secure.
         </p>
         <p className="mb-4">
           No email in your inbox or spam folder?{" "}
