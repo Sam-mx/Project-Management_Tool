@@ -17,7 +17,16 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 
 // middlewares
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000", // if you use port 3000
+      "http://localhost:5173", // if you use Vite's default port
+    ],
+    credentials: true, // if you use cookies or need credentials
+  })
+);
+
 app.use(express.json());
 // static files -> eg: /api/v1/static -> points to /public dir
 app.use(

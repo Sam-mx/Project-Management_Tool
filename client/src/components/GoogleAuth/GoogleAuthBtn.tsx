@@ -1,5 +1,5 @@
 import React from "react";
-import GoogleLogin from "react-google-login";
+import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../axiosInstance";
@@ -12,68 +12,64 @@ interface Props {
 
 const GoogleAuthBtn = ({ setCommonError, setIsSubmitting }: Props) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const googleSuccess = async (response: any) => {
-    const tokenId = response?.tokenId;
+  const googleSuccess = async (response: CredentialResponse) => {
+    const credential = response.credential;
 
-    if (!tokenId) {
+    if (!credential) {
       setCommonError("Oops, something went wrong");
-    } else {
-      axiosInstance
-        .post(`/auth/google`, {
-          tokenId: tokenId,
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const res = await axiosInstance.post(`/auth/google`, {
+        tokenId: credential, // send the JWT credential to your backend
+      });
+      const { data } = res.data;
+
+      setCommonError("");
+      setIsSubmitting(false);
+
+      dispatch(
+        loginUser({
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken,
         })
-        .then((response) => {
-          const { data } = response.data;
-
-          setCommonError("");
-
-          setIsSubmitting(false);
-
-          dispatch(
-            loginUser({
-              accessToken: data.accessToken,
-              refreshToken: data.refreshToken,
-            })
-          );
-        })
-        .catch((error) => {
-          setCommonError("");
-          setIsSubmitting(false);
-
-          if (error.response) {
-            const response = error.response;
-            const { message } = response.data;
-
-            switch (response.status) {
-              case 400:
-              case 500:
-                setCommonError(message);
-                break;
-              default:
-                setCommonError("Oops, something went wrong");
-                break;
-            }
-          } else if (error.request) {
+      );
+      // Optionally navigate after login:
+      // navigate("/dashboard");
+    } catch (error: any) {
+      setIsSubmitting(false);
+      setCommonError("");
+      if (error.response) {
+        const { message } = error.response.data;
+        switch (error.response.status) {
+          case 400:
+          case 500:
+            setCommonError(message);
+            break;
+          default:
             setCommonError("Oops, something went wrong");
-          } else {
-            setCommonError(`Error: ${error.message}`);
-          }
-        });
+        }
+      } else if (error.request) {
+        setCommonError("Oops, something went wrong");
+      } else {
+        setCommonError(`Error: ${error.message}`);
+      }
     }
   };
 
-  const googleFailure = (error: any) => {
+  const googleFailure = () => {
     setCommonError("Unable to get profile information from Google");
   };
 
   return (
     <GoogleLogin
-      clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID as string}
-      buttonText="Continue with Google"
       onSuccess={googleSuccess}
-      onFailure={googleFailure}
-      cookiePolicy={"single_host_origin"}
+      onError={googleFailure}
+      text="continue_with"
     />
   );
 };
