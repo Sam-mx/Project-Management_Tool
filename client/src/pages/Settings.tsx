@@ -40,9 +40,15 @@ const Settings = () => {
       )
       .required("Username is required"),
     password: Yup.string()
-      .min(8, "Password should be min 8 chars long")
+      .min(12, "Password must be at least 12 characters long")
+      .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+      .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
       .matches(/\d/, "Password must contain at least one number")
-      .matches(/[a-zA-Z]/, "Password must contain at least one letter"),
+      .matches(
+        /[@$!%*?&#^+=._-]/,
+        "Password must contain at least one special character"
+      )
+      .matches(/^\S*$/, "Password must not contain spaces"),
     profile: Yup.mixed()
       .test("fileSize", "File Size is too large", (value) =>
         value ? value.size <= 1024 * 1024 * 2 : true

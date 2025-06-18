@@ -368,11 +368,11 @@ const CardDetailModal = ({ _id, boardId, spaceId }: Props) => {
                 </div>
               )}
 
-              {/* members */}
+              {/* Assignee */}
               {card.members && card.members.length > 0 && (
                 <div className="members mb-6">
                   <span className="text-sm font-bold text-slate-600 block mb-2">
-                    Members
+                    Assignee
                   </span>
 
                   <div className="members-content flex items-center flex-wrap gap-2">
