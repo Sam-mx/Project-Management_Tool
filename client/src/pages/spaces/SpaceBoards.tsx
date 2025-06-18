@@ -9,6 +9,7 @@ import Loader from "../../components/Loader/Loader";
 import { addToast } from "../../redux/features/toastSlice";
 import { BoardObj } from "../../types";
 import { ERROR } from "../../types/constants";
+import FloatingChatbot from "../../components/FloatingChatbot.tsx/FloatingChatbot";
 
 interface Props {
   spaceId: string;
@@ -83,6 +84,7 @@ const SpaceBoards = ({ spaceId }: Props) => {
           <p>No Boards!</p>
         )}
       </div>
+      <FloatingChatbot />
     </div>
   );
 };

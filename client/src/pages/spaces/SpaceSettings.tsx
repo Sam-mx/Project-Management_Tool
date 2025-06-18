@@ -21,6 +21,7 @@ import TextArea from "../../components/FormikComponents/TextArea";
 import SubmitBtn from "../../components/FormikComponents/SubmitBtn";
 import FileInput from "../../components/FormikComponents/FileInput";
 import { showModal } from "../../redux/features/modalSlice";
+import FloatingChatbot from "../../components/FloatingChatbot.tsx/FloatingChatbot";
 
 interface Props {
   spaceId: string;
@@ -290,6 +291,7 @@ const SpaceSettings = ({ spaceId, myRole }: Props) => {
           </Formik>
         )}
       </div>
+      <FloatingChatbot />
     </div>
   );
 };

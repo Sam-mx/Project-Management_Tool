@@ -37,6 +37,8 @@ app.use(
 // routes
 app.use(`${BASE_PATH}`, rootRouter);
 
+
+
 app.listen(PORT, () => {
   console.log(`Running on port ${PORT}`);
 });

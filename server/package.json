@@ -25,6 +25,7 @@
     "typescript": "^4.6.3"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@react-oauth/google": "^0.12.2",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",

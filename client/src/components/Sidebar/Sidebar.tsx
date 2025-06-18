@@ -83,11 +83,7 @@ const Sidebar = () => {
       <main className="flex-1 mb-1" id="sidebar">
         <nav className="border-b pb-3">
           <SidebarLink to="/" Icon={VscHome} text="Home" />
-          <SidebarLink
-            to="/profile"
-            Icon={IoSettingsOutline}
-            text="Settings"
-          />
+          <SidebarLink to="/profile" Icon={IoSettingsOutline} text="Settings" />
         </nav>
 
         <ul className="text-sm">

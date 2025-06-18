@@ -1,6 +1,7 @@
 import React from "react";
 import MyCards from "../components/MyCards/MyCards";
 import RecentBoards from "../components/RecentBoards/RecentBoards";
+import FloatingChatbot from "../components/FloatingChatbot.tsx/FloatingChatbot";
 
 const Home = () => {
   return (
@@ -26,6 +27,7 @@ const Home = () => {
 
         <MyCards />
       </section>
+      <FloatingChatbot />
     </div>
   );
 };

@@ -8,6 +8,7 @@ import boardRouter from "./board.route";
 import favoriteRouter from "./favorite.route";
 import listRouter from "./list.route";
 import cardRouter from "./card.route";
+import geminiRouter from "./gemini.route";
 
 const rootRouter = express.Router();
 
@@ -20,5 +21,6 @@ rootRouter.use("/boards", boardRouter);
 rootRouter.use("/favorites", favoriteRouter);
 rootRouter.use("/lists", listRouter);
 rootRouter.use("/cards", cardRouter);
+rootRouter.use("/gemini", geminiRouter);
 
 export default rootRouter;

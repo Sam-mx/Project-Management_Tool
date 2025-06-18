@@ -17,6 +17,7 @@ import {
   SPACE_ROLES,
   WARNING,
 } from "../../types/constants";
+import FloatingChatbot from "../../components/FloatingChatbot.tsx/FloatingChatbot";
 
 interface Props {
   spaceId: string;
@@ -151,6 +152,7 @@ const SpaceMembers = ({ spaceId, myRole }: Props) => {
           <p>No Members!</p>
         )}
       </div>
+      <FloatingChatbot />
     </div>
   );
 };

@@ -10,6 +10,7 @@ import axiosInstance from "../axiosInstance";
 import { addToast } from "../redux/features/toastSlice";
 import { ERROR, SUCCESS } from "../types/constants";
 import { useQueryClient } from "react-query";
+import FloatingChatbot from "../components/FloatingChatbot.tsx/FloatingChatbot";
 
 interface UserObj {
   username: string;
@@ -175,6 +176,7 @@ const Settings = () => {
           </Form>
         </Formik>
       </div>
+      <FloatingChatbot />
     </div>
   );
 };

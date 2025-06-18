@@ -31,6 +31,7 @@ import {
   BOARD_VISIBILITY_TYPES,
   ERROR,
 } from "../../../types/constants";
+import FloatingChatbot from "../../../components/FloatingChatbot.tsx/FloatingChatbot";
 
 const BoardDetail = () => {
   const { id } = useParams();
@@ -519,6 +520,7 @@ const BoardDetail = () => {
           </div>
         </>
       )}
+      <FloatingChatbot />
     </div>
   );
 };
