@@ -65,7 +65,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
       // mail options
       const mailOptions = {
-        from: `Workflow ${process.env.GMAIL}`,
+        from: `Samwise ${process.env.GMAIL}`,
         to: user.email,
         subject: "Forgot Your Password?",
         html: `

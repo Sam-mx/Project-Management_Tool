@@ -4,6 +4,7 @@ import send from "../../assets/icons/send.png";
 import axiosInstance from "../../axiosInstance";
 import axios from "axios";
 import sound from "../../assets/sounds/message.mp3";
+import verify from "../../assets/icons/verified.png";
 
 interface Message {
   role: "user" | "assistant";
@@ -31,7 +32,7 @@ const FloatingChatbot: React.FC = () => {
         {
           role: "assistant",
           content:
-            "Hello there! The Sam's AI assistant is here to help with your project management needs.",
+            "Step into the future of project management 🤲. Sam’s AI assistant stands ready to orchestrate your tasks with expertise and foresight 🙆‍♂️.",
         },
       ]);
     }
@@ -110,7 +111,10 @@ const FloatingChatbot: React.FC = () => {
           style={{ width: "320px", height: "400px" }}
         >
           <div className="flex justify-between items-center bg-blue-500 text-white p-2 rounded-t-lg">
-            <span className="font-semibold">Sam's AI Assistant</span>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold">Sam's AI Assistant</span>
+              <img src={verify} alt="verify Assistant" className="w-8 h-8" />
+            </div>
             <button
               onClick={() => setIsOpen(false)}
               className="p-1 rounded-full hover:bg-blue-600"

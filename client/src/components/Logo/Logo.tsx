@@ -8,7 +8,7 @@ const Logo = () => {
       <div className="mr-1">
         <MdOutlineTimeline size={21} />
       </div>
-      <h3 className="text-xl font-ubuntu font-normal">Sam</h3>
+      <h3 className="text-xl font-ubuntu font-normal">Samwise</h3>
     </Link>
   );
 };

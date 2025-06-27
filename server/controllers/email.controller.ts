@@ -129,12 +129,12 @@ export const resendVerifyEmail = async (req: any, res: Response) => {
 
     // mail options
     const mailOptions = {
-      from: `Sam ${process.env.GMAIL}`,
+      from: `Samwise ${process.env.GMAIL}`,
       to: user.email,
       subject: "Verify Email",
       html: `
         <h1>Verify your email address</h1>
-        <p style="font-size: 16px; font-weight: 600;">To start using Sam - Project Management Tool, just click the verify link below:</p>
+        <p style="font-size: 16px; font-weight: 600;">To start using Samwise, AI-Enhanced Project Management Tool, just click the verify link below:</p>
         <p style="font-size: 14px; font-weight: 600; color: red;">And only click the link if you are the person who initiated this process.</p>
         <br />
         <a style="font-size: 14px;" href=${CLIENT_URL}/email/verify/${genEmailVer.token}?wuid=${genEmailVer.userId} target="_blank">Click here to verify your email</a>
