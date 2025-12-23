@@ -747,3 +747,51 @@ export const deleteList = async (req: any, res: Response) => {
     });
   }
 };
+
+export const sortListByPriority = async (req: any, res: Response) => {
+  try {
+    const { listId } = req.params;
+
+    // 1. Fetch all cards in this list
+    const cards = await Card.find({ listId });
+
+    if (!cards || cards.length === 0) {
+      return res.status(200).json({ success: true, message: "No cards to sort" });
+    }
+
+    // 2. Sort in Memory (Logic: Critical First -> Low Last)
+    cards.sort((a, b) => {
+      // Treat 0 or undefined as Lowest Priority (6) so they go to the bottom
+      const pA = a.priority || 6;
+      const pB = b.priority || 6;
+
+      if (pA !== pB) return pA - pB; // Ascending (1, 2, 3...)
+
+      // Tie-breaker: Ranking Score (1 is High, 3 is Low)
+      const rA = a.rankingScore || 4;
+      const rB = b.rankingScore || 4;
+      return rA - rB;
+    });
+
+    // 3. Prepare Bulk Updates for "pos"
+    // We use large intervals (10000, 20000) to allow future drag-drops between them.
+    // We store as String, so "10000" sorts correctly against "20000".
+    const updates = cards.map((card, index) => {
+      const newPos = (index + 1) * 10000; // 10000, 20000, 30000...
+      return {
+        updateOne: {
+          filter: { _id: card._id },
+          update: { pos: newPos.toString() },
+        },
+      };
+    });
+
+    // 4. Execute Bulk Write
+    await Card.bulkWrite(updates);
+
+    return res.status(200).json({ success: true, message: "List sorted by priority" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, message: "Sorting failed" });
+  }
+};

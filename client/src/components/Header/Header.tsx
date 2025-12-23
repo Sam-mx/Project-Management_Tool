@@ -1,5 +1,6 @@
 import React from "react";
 import ProfileCard from "./ProfileCard";
+import NotificationDropdown from "./NotificationDropdown"; // Import the new component
 import { HiOutlineMenu } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
 import { showSidebar } from "../../redux/features/sidebarSlice";
@@ -7,7 +8,6 @@ import { RootState } from "../../redux/app";
 
 const Header = () => {
   const dispatch = useDispatch();
-
   const { show } = useSelector((state: RootState) => state.sidebar);
 
   return (
@@ -26,7 +26,10 @@ const Header = () => {
           </button>
         )}
       </div>
-      <div className="right">
+
+      {/* UPDATE THIS SECTION */}
+      <div className="right flex items-center">
+        <NotificationDropdown />
         <ProfileCard />
       </div>
     </header>

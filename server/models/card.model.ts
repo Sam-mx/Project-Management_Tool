@@ -88,6 +88,19 @@ const cardSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    priority: {
+    type: Number,
+    default: 0,
+    required: false,
+    },
+    category: {
+    type: String,
+    required: false,
+    },
+    rankingScore: {
+    type: Number,
+    required: false,
+    },
   },
   { timestamps: true }
 );

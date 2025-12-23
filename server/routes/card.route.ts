@@ -16,6 +16,8 @@ cardRouter.delete("/:id", authMiddleware, cardController.deleteCard);
 cardRouter.put("/:id/dnd", authMiddleware, cardController.dndCard);
 // Protected(Auth) PUT /cards/:id/name -> update card name
 cardRouter.put("/:id/name", authMiddleware, cardController.updateCardName);
+// Add this with your other PUT routes
+cardRouter.put("/:id/category", authMiddleware, cardController.updateCardCategory);
 // Protected(Auth) PUT /cards/:id/description -> update card description
 cardRouter.put(
   "/:id/description",

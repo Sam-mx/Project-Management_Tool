@@ -14,15 +14,14 @@ const SidebarLink = ({ to, Icon, text }: Props) => {
 
   return (
     <NavLink
-      end
       to={to}
-      className={({ isActive }) => {
-        setCurrentActive(isActive);
-
-        return `relative flex items-center px-4 py-2  text-sm ${
-          isActive ? "bg-primary_light hover:bg-none" : "hover:bg-secondary"
-        }`;
-      }}
+      className={({ isActive }) =>
+        `flex items-center px-3 py-2 rounded-md transition-colors ${
+          isActive
+            ? "bg-violet-100 text-violet-700"
+            : "text-gray-600 hover:bg-gray-100"
+        }`
+      }
     >
       {currentActive && (
         <span className="absolute inset-y-0 left-0 w-1 bg-primary rounded-tr-xl rounded-br-xl"></span>

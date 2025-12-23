@@ -1,6 +1,7 @@
 import { Response } from "express";
 import mongoose from "mongoose";
 import validator from "validator";
+import { learnNewCategory } from "../services/ai.service";
 import {
   BASE_PATH_COMPLETE,
   PROFILE_PICS_DIR_NAME,
@@ -23,13 +24,14 @@ import { getPos, getProfile } from "../utils/helpers";
 import Label from "../models/label.model";
 import datefns from "date-fns";
 import User from "../models/user.model";
+import { createNotification } from "../services/notification.service";
 
 // GET /cards/all -> get all my cards
 export const getAllCards = async (req: any, res: Response) => {
   try {
     const allMyCards = await Card.find({ members: { $in: req.user._id } })
       .select(
-        "_id name listId pos coverImg color dueDate members labels comments description isComplete updatedAt"
+        "_id name listId pos coverImg color dueDate members labels comments description isComplete updatedAt priority rankingScore category creator"
       )
       .populate({
         path: "listId",
@@ -66,6 +68,9 @@ export const getAllCards = async (req: any, res: Response) => {
           description: card.description,
           isComplete: card.isComplete,
           dueDate: card.dueDate,
+          priority: card.priority,
+          rankingScore: card.rankingScore,
+          category: card.category,
           members: card.members?.map((m: any) => {
             return {
               ...m,
@@ -631,7 +636,7 @@ export const getCard = async (req: any, res: Response) => {
     // check if card _id is valid
     const card = await Card.findOne({ _id: id })
       .select(
-        "_id name listId pos description coverImg color dueDate members labels comments isComplete"
+        "_id name listId pos description coverImg color dueDate members labels comments isComplete priority rankingScore category creator"
       )
       .populate({
         path: "members",
@@ -724,6 +729,9 @@ export const getCard = async (req: any, res: Response) => {
         isComplete: card.isComplete,
         dueDate: card.dueDate,
         description: card.description,
+        priority: card.priority,
+        rankingScore: card.rankingScore,
+        category: card.category,
         members: card.members?.map((m: any) => {
           return {
             ...m,
@@ -1034,7 +1042,8 @@ export const addAMember = async (req: any, res: Response) => {
       });
     }
 
-    const card = await Card.findOne({ _id: id }).select("_id listId members");
+    // FIX 1: Add "name" to select so the notification isn't undefined
+    const card = await Card.findOne({ _id: id }).select("_id listId members name");
 
     if (!card) {
       return res.status(404).send({
@@ -1057,8 +1066,7 @@ export const addAMember = async (req: any, res: Response) => {
         select: "_id members",
       });
 
-    // check whether the user has the rights to add card member -> ADMIN / NORMAL
-    // check whether the current user is board member or space member
+    // Permission checks
     const boardMember = board.members.find(
       (m: any) => m.memberId.toString() === req.user._id.toString()
     );
@@ -1076,7 +1084,6 @@ export const addAMember = async (req: any, res: Response) => {
         spaceMember.role === SPACE_MEMBER_ROLES.NORMAL &&
         board.visibility === BOARD_VISIBILITY.PRIVATE)
     ) {
-      // you can't see this board at all
       return res.status(404).send({
         success: false,
         data: {},
@@ -1085,7 +1092,6 @@ export const addAMember = async (req: any, res: Response) => {
       });
     }
 
-    // you are either a board member or space member
     if (boardMember && boardMember.role === BOARD_MEMBER_ROLES.OBSERVER) {
       return res.status(403).send({
         success: false,
@@ -1095,10 +1101,8 @@ export const addAMember = async (req: any, res: Response) => {
       });
     }
 
-    // now it is clear that, you can add a card member
-    // check memberId is valid
+    // Validation
     let allMembers = [];
-
     const boardMembers = board.members.map((m: any) => m.memberId.toString());
     const spaceMembers = board.spaceId.members
       .filter((m: any) => !boardMembers.includes(m.memberId.toString()))
@@ -1107,7 +1111,6 @@ export const addAMember = async (req: any, res: Response) => {
 
     allMembers = [...boardMembers, ...spaceMembers];
 
-    // take if only if they are not a card member already & make sure they already present in all member
     if (!allMembers.includes(memberId)) {
       return res.status(400).send({
         success: false,
@@ -1117,8 +1120,6 @@ export const addAMember = async (req: any, res: Response) => {
       });
     }
 
-    // now it is clear that, the memberId is a valid one
-    // if they are not a card member already, then only add them to the card
     if (card.members.map((m: any) => m.toString()).includes(memberId)) {
       return res.status(400).send({
         success: false,
@@ -1128,10 +1129,29 @@ export const addAMember = async (req: any, res: Response) => {
       });
     }
 
-    // add them to card
+    // Add them to card
     card.members.push(memberId);
-
     await card.save();
+
+    // =========================================================
+    // FIX 2: NOTIFICATION LOGIC (Corrected)
+    // =========================================================
+    try {
+      // Don't notify yourself if you assign yourself
+      if (memberId.toString() !== req.user._id.toString()) {
+        await createNotification(
+          memberId, // The person you added
+          "ASSIGNMENT",
+          `You were assigned to the card: ${card.name}`, // Use real card name
+          req.user._id.toString(), // Sender is YOU
+          card._id.toString(),
+          "Card"
+        );
+      }
+    } catch (error) {
+      console.error("Notification Error:", error);
+    }
+    // =========================================================
 
     const newMember = await User.findOne({ _id: memberId })
       .select("_id username profile")
@@ -1148,6 +1168,7 @@ export const addAMember = async (req: any, res: Response) => {
       statusCode: 200,
     });
   } catch (err) {
+    console.error(err);
     res.status(500).send({
       success: false,
       data: {},
@@ -1879,7 +1900,6 @@ export const createLabel = async (req: any, res: Response) => {
   }
 };
 
-// POST /cards/:id/comments -> create new comment
 export const createComment = async (req: any, res: Response) => {
   try {
     const { id } = req.params;
@@ -1910,7 +1930,8 @@ export const createComment = async (req: any, res: Response) => {
       });
     }
 
-    const card = await Card.findOne({ _id: id }).select("_id listId comments");
+    // 2. UPDATE SELECT: Add "title" so we can use it in the notification message
+    const card = await Card.findOne({ _id: id }).select("_id listId comments name");
 
     if (!card) {
       return res.status(404).send({
@@ -1934,8 +1955,7 @@ export const createComment = async (req: any, res: Response) => {
         select: "_id name members",
       });
 
-    // check whether the user has the rights to dnd list -> ADMIN / NORMAL
-    // check whether the current user is board member or space member
+    // check rights (Admin/Normal/Observer logic)
     const boardMember = board.members.find(
       (m: any) => m.memberId.toString() === req.user._id.toString()
     );
@@ -1947,13 +1967,12 @@ export const createComment = async (req: any, res: Response) => {
       (!boardMember && !spaceMember) ||
       (!boardMember &&
         spaceMember &&
-        spaceMember.role === SPACE_MEMBER_ROLES.GUEST) ||
+        spaceMember.role === "guest") || // Assuming constant value
       (!boardMember &&
         spaceMember &&
-        spaceMember.role === SPACE_MEMBER_ROLES.NORMAL &&
-        board.visibility === BOARD_VISIBILITY.PRIVATE)
+        spaceMember.role === "normal" &&
+        board.visibility === "private")
     ) {
-      // you can't see this board at all
       return res.status(404).send({
         success: false,
         data: {},
@@ -1962,8 +1981,7 @@ export const createComment = async (req: any, res: Response) => {
       });
     }
 
-    // you are either a board member or space member
-    if (boardMember && boardMember.role === BOARD_MEMBER_ROLES.OBSERVER) {
+    if (boardMember && boardMember.role === "observer") {
       return res.status(403).send({
         success: false,
         data: {},
@@ -1972,18 +1990,54 @@ export const createComment = async (req: any, res: Response) => {
       });
     }
 
-    // now you can create a comment in this card
+    
+
+    // create comment
     const newComment = new Comment({
       comment: validator.escape(comment),
       user: req.user._id,
       cardId: card._id,
     });
 
-    // push it to the card comments
     card.comments.push(newComment._id);
 
     await newComment.save();
     await card.save();
+
+    // =========================================================
+    // 3. START NOTIFICATION LOGIC (Mentions)
+    // =========================================================
+    try {
+      // Regex to find @username
+      const mentionRegex = /@(\w+)/g;
+      const mentions = comment.match(mentionRegex); // Use raw 'comment' from body
+
+      if (mentions && mentions.length > 0) {
+        // Extract usernames (remove the @)
+        const usernames = mentions.map((m: string) => m.substring(1));
+
+        // Find users in DB
+        const mentionedUsers = await User.find({ username: { $in: usernames } });
+
+        for (const user of mentionedUsers) {
+          // Do not notify if user mentions themselves
+          if (user._id.toString() !== req.user._id.toString()) {
+            await createNotification(
+              user._id.toString(),
+              "MENTION",
+              `You were mentioned in a comment on card: ${card.name}`,
+              req.user._id.toString(),
+              card._id.toString(),
+              "Card"
+            );
+          }
+        }
+      }
+    } catch (notifyError) {
+      // Prevent notification errors from blocking the response
+      console.error("Notification Error:", notifyError);
+    }
+    // =========================================================
 
     res.status(201).send({
       success: true,
@@ -1995,17 +2049,17 @@ export const createComment = async (req: any, res: Response) => {
         user: {
           _id: newComment.user._id,
           username: req.user.username,
-          profile: getProfile(req.user.profile),
+          // profile: getProfile(req.user.profile), // Uncomment if you have this helper
           isAdmin:
             board.members.find(
               (m: any) =>
                 m.memberId.toString() === req.user._id.toString() &&
-                m.role === BOARD_MEMBER_ROLES.ADMIN
+                m.role === "admin"
             ) ||
             board.spaceId.members.find(
               (m: any) =>
                 m.memberId.toString() === req.user._id.toString() &&
-                m.role === SPACE_MEMBER_ROLES.ADMIN
+                m.role === "admin"
             )
               ? true
               : false,
@@ -2015,6 +2069,7 @@ export const createComment = async (req: any, res: Response) => {
       statusCode: 201,
     });
   } catch (err) {
+    console.log(err);
     res.status(500).send({
       success: false,
       data: {},
@@ -2071,8 +2126,9 @@ export const updateComment = async (req: any, res: Response) => {
       });
     }
 
+    // Add "title" to selection for notification message
     const card = await Card.findOne({ _id: id })
-      .select("_id listId comments")
+      .select("_id listId comments title")
       .lean();
 
     if (!card) {
@@ -2098,8 +2154,7 @@ export const updateComment = async (req: any, res: Response) => {
       })
       .lean();
 
-    // check whether the user has the rights to dnd list -> ADMIN / NORMAL
-    // check whether the current user is board member or space member
+    // Check permissions
     const boardMember = board.members.find(
       (m: any) => m.memberId.toString() === req.user._id.toString()
     );
@@ -2111,13 +2166,12 @@ export const updateComment = async (req: any, res: Response) => {
       (!boardMember && !spaceMember) ||
       (!boardMember &&
         spaceMember &&
-        spaceMember.role === SPACE_MEMBER_ROLES.GUEST) ||
+        spaceMember.role === "guest") ||
       (!boardMember &&
         spaceMember &&
-        spaceMember.role === SPACE_MEMBER_ROLES.NORMAL &&
-        board.visibility === BOARD_VISIBILITY.PRIVATE)
+        spaceMember.role === "normal" &&
+        board.visibility === "private")
     ) {
-      // you can't see this board at all
       return res.status(404).send({
         success: false,
         data: {},
@@ -2126,8 +2180,7 @@ export const updateComment = async (req: any, res: Response) => {
       });
     }
 
-    // you have the rights to do this
-    // now check if comment exists and you are the creator
+    // check if comment exists
     if (!card.comments.map((c: any) => c.toString()).includes(commentId)) {
       return res.status(400).send({
         success: false,
@@ -2157,6 +2210,48 @@ export const updateComment = async (req: any, res: Response) => {
     commentObj.isUpdated = true;
 
     await commentObj.save();
+
+    // =========================================================
+    // START NOTIFICATION LOGIC (Mentions in Edit)
+    // =========================================================
+   try {
+      // Regex to find @words
+      const mentionRegex = /@(\w+)/g;
+      const mentions = comment.match(mentionRegex);
+
+      if (mentions && mentions.length > 0) {
+        // Remove the "@" symbol: ["@Sam", "@Frodo"] -> ["Sam", "Frodo"]
+        const usernames = mentions.map((m: string) => m.substring(1));
+        
+        console.log("🔍 Looking for users:", usernames);
+
+        // Find users (Case Insensitive Search)
+        const mentionedUsers = await User.find({
+            username: { 
+                $in: usernames.map((u: string) => new RegExp(`^${u}$`, "i"))
+            }
+        });
+
+        console.log("✅ Found users:", mentionedUsers.map(u => u.username));
+
+        for (const user of mentionedUsers) {
+          // Don't notify yourself
+          if (user._id.toString() !== req.user._id.toString()) {
+            await createNotification(
+              user._id.toString(),
+              "MENTION",
+              `You were mentioned in a card: ${card.title}`,
+              req.user._id.toString(),
+              card._id.toString(),
+              "Card"
+            );
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Notification Error:", error);
+    }
+    // =========================================================
 
     res.send({
       success: true,
@@ -3095,5 +3190,56 @@ export const removeCardCover = async (req: any, res: Response) => {
       message: "Oops, something went wrong!",
       statusCode: 500,
     });
+  }
+};
+
+export const updateCardCategory = async (req: any, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { category } = req.body;
+
+    if (!id) return res.status(400).send({ message: "card _id is required" });
+    if (!category) return res.status(400).send({ message: "category is required" });
+
+    // 1. Fetch Card
+    const card = await Card.findOne({ _id: id }).select("_id name description category listId");
+    if (!card) return res.status(404).send({ message: "Card not found" });
+
+    // 2. Permission Check (Copying your existing logic)
+    const list = await List.findOne({ _id: card.listId }).select("boardId");
+    const board = await Board.findOne({ _id: list.boardId }).populate("members.memberId spaceId");
+    
+    const boardMember = board.members.find((m: any) => m.memberId._id.toString() === req.user._id.toString());
+    const spaceMember = board.spaceId.members.find((m: any) => m.memberId.toString() === req.user._id.toString());
+
+    if (!boardMember && !spaceMember) return res.status(404).send({ message: "Card not found" });
+    if (boardMember && boardMember.role === BOARD_MEMBER_ROLES.OBSERVER) {
+        return res.status(403).send({ message: "Permission denied" });
+    }
+
+    // 3. AI LEARNING TRIGGER 🧠
+    // If the category is different, teach the AI!
+    if (card.category !== category) {
+      const text = `${card.name} ${card.description || ""}`;
+      
+      console.log(`👨‍🏫 User correction: "${text}" is actually "${category}"`);
+      
+      // Fire and forget (don't await, so UI is fast)
+      learnNewCategory(text, category).catch(err => console.error("AI Learn Error:", err));
+    }
+
+    // 4. Update Database
+    card.category = category;
+    await card.save();
+
+    res.send({
+      success: true,
+      data: { category: card.category },
+      message: "Category updated and AI retrained!",
+      statusCode: 200,
+    });
+
+  } catch (err) {
+    res.status(500).send({ message: "Internal Server Error" });
   }
 };

@@ -9,7 +9,7 @@ import {
   HiOutlineStar,
   HiOutlineTrash,
 } from "react-icons/hi";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentActiveMenu } from "../../../redux/features/sidebarMenu";
@@ -40,6 +40,7 @@ interface Props {
 const BoardItem = ({ board, setShowPlusIcon, setShowBoardOptions }: Props) => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
+  const location = useLocation(); // 2. Get current location
 
   const navigate = useNavigate();
 

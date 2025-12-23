@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2016",
     "module": "commonjs",
     "lib": ["es6"],
     "allowJs": true,
@@ -8,7 +8,11 @@
     "rootDir": "./",
     "strict": true,
     "noImplicitAny": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types" 
+    ]
   },
   "exclude": ["./node_modules"]
 }

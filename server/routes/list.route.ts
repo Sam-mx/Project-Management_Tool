@@ -15,4 +15,6 @@ listRouter.get("/", authMiddleware, listController.getLists);
 // Protected(Auth) DELETE /lists/:id -> delete list and cards below it
 listRouter.delete("/:id", authMiddleware, listController.deleteList);
 
+listRouter.put("/:listId/sort-priority", authMiddleware, listController.sortListByPriority);
+
 export default listRouter;

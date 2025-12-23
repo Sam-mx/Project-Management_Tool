@@ -107,6 +107,9 @@ export interface BoardObj {
     | typeof BOARD_ROLES.OBSERVER;
   bgImg: string;
   spaceId?: string;
+  category?: string;
+  priority?: number;
+  rankingScore?: number;
 }
 
 export interface BoardMemberObj {
@@ -213,6 +216,9 @@ export interface CardObj {
   members: MemberObjM[] | null;
   labels: LabelObj[] | null;
   comments: number | null;
+  priority?: number; // <--- Correct field name
+  category?: string;
+  rank?:number;
 }
 
 export interface CardObjExt {
@@ -267,6 +273,9 @@ export interface CardDetailObj {
   members: MemberObjM[] | null;
   labels: LabelObj[] | null;
   comments: CommentObj[] | null;
+  priority?: number;
+  rankingScore?: number;
+  category?: string;
   role:
     | typeof BOARD_ROLES.ADMIN
     | typeof BOARD_ROLES.NORMAL

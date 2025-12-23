@@ -5,6 +5,7 @@ import {
   HiOutlinePlus,
   HiOutlineDotsHorizontal,
   HiOutlineTrash,
+  HiLightningBolt, // 👈 1. Import Icon
 } from "react-icons/hi";
 import { useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
@@ -12,13 +13,15 @@ import axiosInstance from "../../axiosInstance";
 import { hideModal } from "../../redux/features/modalSlice";
 import { addToast } from "../../redux/features/toastSlice";
 import { CardObj, ListObj } from "../../types";
-import { BOARD_ROLES, ERROR } from "../../types/constants";
+import { BOARD_ROLES, ERROR, SUCCESS } from "../../types/constants"; // 👈 2. Import SUCCESS
 import Options from "../Options/Options";
 import OptionsItem from "../Options/OptionsItem";
 import AddACard from "./AddACard";
 import Card from "./Card";
 import CardDummy from "./CardDummy";
 import ListName from "./ListName";
+// 👇 3. Import the Service (Make sure path is correct)
+import { sortListByPriority } from "../../services/list.service";
 
 interface Props {
   myRole:
@@ -45,6 +48,21 @@ const List = ({ myRole, index, list, boardId, spaceId, cards }: Props) => {
     setLastCoords({ x: 0, y: 0 });
   };
 
+  // 👇 4. Add the Sort Handler
+  const handleSort = async () => {
+    try {
+      await sortListByPriority(list._id);
+
+      // Refresh the board to see new order
+      await queryClient.invalidateQueries(["getLists", boardId]);
+
+      dispatch(addToast({ kind: SUCCESS, msg: "List sorted by Priority!" }));
+      reset();
+    } catch (err) {
+      dispatch(addToast({ kind: ERROR, msg: "Failed to sort list" }));
+    }
+  };
+
   const deleteList = (_id: string) => {
     axiosInstance
       .delete(`/lists/${_id}`)
@@ -62,13 +80,12 @@ const List = ({ myRole, index, list, boardId, spaceId, cards }: Props) => {
         reset();
 
         if (error.response) {
-          const response = error.response;
+          const response = error.response as any;
           const { message } = response.data;
 
           switch (response.status) {
             case 403:
               dispatch(addToast({ kind: ERROR, msg: message }));
-
               queryClient.invalidateQueries(["getBoard", boardId]);
               queryClient.invalidateQueries(["getLists", boardId]);
               queryClient.invalidateQueries(["getSpaces"]);
@@ -76,15 +93,12 @@ const List = ({ myRole, index, list, boardId, spaceId, cards }: Props) => {
               break;
             case 404:
               dispatch(addToast({ kind: ERROR, msg: message }));
-
               queryClient.invalidateQueries(["getBoard", boardId]);
               queryClient.invalidateQueries(["getLists", boardId]);
               queryClient.invalidateQueries(["getSpaces"]);
               queryClient.invalidateQueries(["getFavorites"]);
-
               queryClient.invalidateQueries(["getRecentBoards"]);
               queryClient.invalidateQueries(["getAllMyCards"]);
-
               queryClient.invalidateQueries(["getSpaceBoards", spaceId]);
               queryClient.invalidateQueries(["getSpaceSettings", spaceId]);
               queryClient.invalidateQueries(["getSpaceMembers", spaceId]);
@@ -172,6 +186,14 @@ const List = ({ myRole, index, list, boardId, spaceId, cards }: Props) => {
                     x={lastCoords.x - 30}
                     y={lastCoords.y + 20}
                   >
+                    {/* 👇 5. Add the Sort Option Item HERE */}
+                    <OptionsItem
+                      key="SortList"
+                      Icon={HiLightningBolt}
+                      text="Sort by Priority"
+                      onClick={handleSort}
+                    />
+
                     <OptionsItem
                       key="DeleteList"
                       Icon={HiOutlineTrash}
@@ -244,15 +266,16 @@ const List = ({ myRole, index, list, boardId, spaceId, cards }: Props) => {
             )}
           </Droppable>
 
-          {[BOARD_ROLES.ADMIN, BOARD_ROLES.NORMAL].includes(myRole) && !isOpen && (
-            <button
-              className="p-2 hover:bg-gray-300 rounded text-gray-700 hover:text-gray-900 w-full flex items-center"
-              onClick={() => setIsOpen(true)}
-            >
-              <HiOutlinePlus className="mr-1" size={18} />
-              <span>Add a card</span>
-            </button>
-          )}
+          {[BOARD_ROLES.ADMIN, BOARD_ROLES.NORMAL].includes(myRole) &&
+            !isOpen && (
+              <button
+                className="p-2 hover:bg-gray-300 rounded text-gray-700 hover:text-gray-900 w-full flex items-center"
+                onClick={() => setIsOpen(true)}
+              >
+                <HiOutlinePlus className="mr-1" size={18} />
+                <span>Add a card</span>
+              </button>
+            )}
         </div>
       )}
     </Draggable>

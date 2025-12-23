@@ -9,6 +9,8 @@ import favoriteRouter from "./favorite.route";
 import listRouter from "./list.route";
 import cardRouter from "./card.route";
 import geminiRouter from "./gemini.route";
+import aiRouter from "./ai.route";
+import notificationRouter from "./notification.route";
 
 const rootRouter = express.Router();
 
@@ -22,5 +24,7 @@ rootRouter.use("/favorites", favoriteRouter);
 rootRouter.use("/lists", listRouter);
 rootRouter.use("/cards", cardRouter);
 rootRouter.use("/gemini", geminiRouter);
+rootRouter.use("/ai", aiRouter);
+rootRouter.use("/notifications", notificationRouter);
 
 export default rootRouter;
