@@ -1,7 +1,7 @@
 import { HiOutlineLogout } from "react-icons/hi";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom"; // 1. Import useNavigate
+import { Link } from "react-router-dom"; // navigate removed, not needed
 import { CgProfile } from "react-icons/cg";
 import useClose from "../../hooks/useClose";
 import { logoutUser } from "../../redux/features/authSlice";
@@ -14,13 +14,15 @@ const ProfileCard = () => {
   const ref = useClose(() => setShow(false));
 
   const { user } = useSelector((state: RootState) => state.auth);
-
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // 2. Initialize hook
 
   const handleLogout = () => {
+    // 1. Clear Redux State
     dispatch(logoutUser());
-    navigate("/"); // 3. Redirect to Landing Page immediately
+
+    // 2. FORCE a hard refresh to the Landing Page
+    // This kills all sockets/states instantly and prevents errors.
+    window.location.href = "/";
   };
 
   return (
@@ -69,7 +71,7 @@ const ProfileCard = () => {
             onClick={() => {
               setShow(false);
             }}
-            className="flex items-center justify-between w-full p-3 text-gray-600 hover:bg-gray-200  "
+            className="flex items-center justify-between w-full p-3 text-gray-600 hover:bg-gray-200"
           >
             <span className="text-sm">Profile</span>
             <div className="text-gray-500">
@@ -81,7 +83,7 @@ const ProfileCard = () => {
               handleLogout();
               setShow(false);
             }}
-            className="flex items-center justify-between w-full p-3 text-gray-600 rounded-md rounded-t-none hover:bg-gray-200 "
+            className="flex items-center justify-between w-full p-3 text-gray-600 rounded-md rounded-t-none hover:bg-gray-200"
           >
             <span className="text-sm">Log Out</span>
             <div className="text-gray-500">
