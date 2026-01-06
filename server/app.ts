@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import cookieParser from "cookie-parser"; // 1. Import cookie-parser
 import { connectDB } from "./utils/db";
 import { BASE_PATH, PUBLIC_DIR_NAME, STATIC_PATH } from "./config";
 import path from "path";
@@ -39,6 +40,7 @@ app.use(
 );
 
 app.use(express.json());
+app.use(cookieParser()); // 2. Use cookie-parser middleware
 
 // static files
 app.use(
