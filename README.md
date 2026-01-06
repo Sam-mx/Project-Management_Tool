@@ -1,9 +1,12 @@
 
 
-<h1>
+<h1 align="center">
   Samwise - AI-Enhanced Project Management Tool<br/>
 </h1>
 
+<div align="center">
+  <img alt="Demo" src="./client/src/assets/Samwise%20(1).png" />
+</div>
 
 ## Description
 
