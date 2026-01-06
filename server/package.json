@@ -5,6 +5,7 @@
   "author": "Sam",
   "license": "MIT",
   "scripts": {
+    "build": "echo 'No build step needed for ts-node'",
     "start": "ts-node --transpile-only app.ts",
     "dev": "ts-node-dev --respawn --pretty --transpile-only app.ts"
   },
