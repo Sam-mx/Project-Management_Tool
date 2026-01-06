@@ -1,7 +1,7 @@
 import { HiOutlineLogout } from "react-icons/hi";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // 1. Import useNavigate
 import { CgProfile } from "react-icons/cg";
 import useClose from "../../hooks/useClose";
 import { logoutUser } from "../../redux/features/authSlice";
@@ -16,9 +16,11 @@ const ProfileCard = () => {
   const { user } = useSelector((state: RootState) => state.auth);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // 2. Initialize hook
 
   const handleLogout = () => {
     dispatch(logoutUser());
+    navigate("/"); // 3. Redirect to Landing Page immediately
   };
 
   return (

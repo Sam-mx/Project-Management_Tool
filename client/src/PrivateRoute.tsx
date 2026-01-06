@@ -22,7 +22,8 @@ const PrivateRoute = ({ toast, children }: Props) => {
     if (toast) {
       dispatch(addToast(toast));
     }
-    return <Navigate replace to="/auth/login" state={{ from: location }} />;
+    // FIX: Redirect to Landing Page ("/") instead of Login
+    return <Navigate replace to="/" state={{ from: location }} />;
   }
 
   return children;

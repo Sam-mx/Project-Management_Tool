@@ -7,6 +7,7 @@ import AuthLayout from "./components/layouts/AuthLayout";
 import Toasts from "./components/Toasts/Toasts";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import LandingPage from "./pages/LandingPage"; // <--- 1. Import LandingPage
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -18,18 +19,13 @@ import ResetPassword from "./pages/ResetPassword";
 import ForgotPassword from "./pages/ForgotPassword";
 
 // 1. Initialize Socket.io Connection
-// IMPORTANT: Make sure this port matches your SERVER port (8000 or 8001)
 export const socket = io(
   import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"
 );
 
 const App = () => {
-  // 2. Get the logged-in user from Redux
-  // (Assuming your auth slice is named 'auth' and has a 'user' object)
-  // Add ": any" to state
   const user = useSelector((state: any) => state.auth?.user);
 
-  // 3. Join the socket room when user logs in
   useEffect(() => {
     if (user && user._id) {
       console.log("🔌 Socket joining as user:", user._id);
@@ -44,10 +40,13 @@ const App = () => {
 
       <BrowserRouter>
         <Routes>
-          {/* /password/recover/:token password - new password page */}
+          {/* --- 2. Add Landing Page Route (Must be before the catch-all /*) --- */}
+          <Route path="/" element={<LandingPage />} />
+
+          {/* /password/recover/:token */}
           <Route path="reset-password/:token" element={<ResetPassword />} />
 
-          {/* /reset-password put email here */}
+          {/* /forgot-password */}
           <Route path="forgot-password" element={<AuthLayout />}>
             <Route index element={<ForgotPassword />} />
           </Route>
@@ -77,7 +76,7 @@ const App = () => {
             }
           />
 
-          {/* /* */}
+          {/* Catch-all for Main App (Dashboard, Boards, etc.) */}
           <Route
             path="/*"
             element={

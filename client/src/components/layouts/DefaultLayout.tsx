@@ -31,7 +31,9 @@ const DefaultLayout = () => {
           <div className="page-wrapper flex-1 mt-14">
             <Suspense fallback={<div>Loading...</div>}>
               <Routes>
-                <Route path="/" element={<Home />} />
+                {/* --- FIX: Change path="/" to path="dashboard" --- */}
+                <Route path="dashboard" element={<Home />} />
+
                 <Route path="/profile" element={<Settings />} />
 
                 {/* /s/:id/* */}
