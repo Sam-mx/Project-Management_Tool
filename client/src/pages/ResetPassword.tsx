@@ -72,61 +72,64 @@ const ResetPassword = () => {
       .required("Passwords must match"),
   });
 
-  const handleSubmit = useCallback((passwordObj: PasswordObj) => {
-    setIsSubmitting(true);
+  const handleSubmit = useCallback(
+    (passwordObj: PasswordObj) => {
+      setIsSubmitting(true);
 
-    axiosInstance
-      .post(`/accounts/reset-password/${token}`, passwordObj)
-      .then((response) => {
-        const { data } = response.data;
-        
-        setIsSubmitting(false);
+      axiosInstance
+        .post(`/accounts/reset-password/${token}`, passwordObj)
+        .then((response) => {
+          const { data } = response.data;
 
-        dispatch(
-          loginUser({
-            accessToken: data.accessToken,
-            refreshToken: data.refreshToken,
-          })
-        );
+          setIsSubmitting(false);
 
-        navigate("/", { replace: true });
-      })
-      .catch((error: AxiosError) => {
-        setIsSubmitting(false);
-
-        if (error.response) {
-          const response = error.response;
-          const { message } = response.data;
-
-          switch (response.status) {
-            case 404:
-              dispatch(addToast({ kind: ERROR, msg: message }));
-              // if authenticated
-              if (accessToken || refreshToken) {
-                navigate("/", { replace: true });
-              } else {
-                navigate("/forgot-password", { replace: true });
-              }
-              break;
-            case 400:
-            case 500:
-              dispatch(addToast({ kind: ERROR, msg: message }));
-              break;
-            default:
-              dispatch(
-                addToast({ kind: ERROR, msg: "Oops, something went wrong" })
-              );
-              break;
-          }
-        } else if (error.request) {
           dispatch(
-            addToast({ kind: ERROR, msg: "Oops, something went wrong" })
+            loginUser({
+              accessToken: data.accessToken,
+              refreshToken: data.refreshToken,
+            })
           );
-        } else {
-          dispatch(addToast({ kind: ERROR, msg: `Error: ${error.message}` }));
-        }
-      });
-  }, [token]);
+
+          navigate("/", { replace: true });
+        })
+        .catch((error: AxiosError) => {
+          setIsSubmitting(false);
+
+          if (error.response) {
+            const response = error.response;
+            const { message } = response.data;
+
+            switch (response.status) {
+              case 404:
+                dispatch(addToast({ kind: ERROR, msg: message }));
+                // if authenticated
+                if (accessToken || refreshToken) {
+                  navigate("/", { replace: true });
+                } else {
+                  navigate("/forgot-password", { replace: true });
+                }
+                break;
+              case 400:
+              case 500:
+                dispatch(addToast({ kind: ERROR, msg: message }));
+                break;
+              default:
+                dispatch(
+                  addToast({ kind: ERROR, msg: "Oops, something went wrong" })
+                );
+                break;
+            }
+          } else if (error.request) {
+            dispatch(
+              addToast({ kind: ERROR, msg: "Oops, something went wrong" })
+            );
+          } else {
+            dispatch(addToast({ kind: ERROR, msg: `Error: ${error.message}` }));
+          }
+        });
+    },
+    [token]
+  );
 
   return (
     <div className="auth-second w-screen h-screen overflow-y-auto flex items-center justify-center bg-blue-50">
