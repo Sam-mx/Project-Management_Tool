@@ -19,7 +19,9 @@ import ForgotPassword from "./pages/ForgotPassword";
 
 // 1. Initialize Socket.io Connection
 // IMPORTANT: Make sure this port matches your SERVER port (8000 or 8001)
-export const socket = io("http://localhost:8000");
+export const socket = io(
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"
+);
 
 const App = () => {
   // 2. Get the logged-in user from Redux
