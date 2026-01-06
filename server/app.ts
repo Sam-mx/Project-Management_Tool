@@ -28,7 +28,8 @@ app.use(
       "http://localhost:3000",
       "http://localhost:5173", // Vite default
       "http://localhost:8000",
-      "http://localhost:8001"
+      "http://localhost:8001",
+      "https://samwise-pmt.vercel.app/"
     ],
     credentials: true,
   })
