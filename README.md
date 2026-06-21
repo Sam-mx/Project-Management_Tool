@@ -1,5 +1,3 @@
-
-
 <h1 align="center">
   Samwise - AI-Enhanced Project Management Tool<br/>
 </h1>
@@ -13,10 +11,18 @@
 Samwise is an open-source, intelligent project management platform designed to democratize advanced productivity features for small teams and freelancers. Built on the MERN stack with TypeScript, it integrates Generative AI (Google Gemini) directly into a Kanban workflow to automate decision-making, prioritize tasks, and reduce management overhead.
 
 ## 🌐 Live Demo
+
 <h1 align="center">
  <a href="https://samwise-pmt.vercel.app/" target="_blank">Samwise</a>
 </h1>
 (Note: The initial load may take up to 60 seconds as the free-tier backend spins up.)
+
+## 📚 Project Documentation
+
+For a detailed breakdown of the system design and management artifacts, please refer to the documentation in the `/docs` folder:
+
+- [System Architecture](/docs/architecture.md)
+- [Setup Guide](/docs/setup.md)
 
 ## 🚀 Key Features
 
@@ -33,6 +39,21 @@ Samwise is an open-source, intelligent project management platform designed to d
 👥 Role-Based Access: Granular permissions (Admin, Normal, Observer) for Boards and Spaces.
 
 📊 Smart Priority: Automatic priority calculation based on task descriptions and due dates.
+
+### 📋 Project Management Artifacts
+
+- [Work Breakdown Structure (WBS)](./docs/diagrams/wbs.png)
+- [Entity Relationship Diagram (ERD)](./docs/diagrams/erd.jpg)
+- [System Sequence Diagram](./docs/diagrams/sequence.png)
+- [State Transition Diagram](./docs/diagrams/state.jpg)
+
+---
+
+### Architecture Overview
+
+![System Architecture Flow](./docs/diagrams/architecture.png)
+
+---
 
 ## 🛠️ Tech Stack
 
@@ -62,7 +83,7 @@ Samwise is an open-source, intelligent project management platform designed to d
 
 ## ⚙️ Installation & Setup
 
-`` You can run Samwise locally using either Docker (recommended) or npm.``
+` You can run Samwise locally using either Docker (recommended) or npm.`
 
 ### Prerequisites
 
@@ -85,15 +106,16 @@ cd samwise-project
 
 ```
 
-
-2. Create Environment Variables: Create a ``.env`` file in the root directory and populate it (see Environment Variables section below).
+2. Create Environment Variables: Create a `.env` file in the root directory and populate it (see Environment Variables section below).
 
 3. Run with Docker Compose:
+
 ```
 
 docker-compose up --build
 
 ```
+
 The app will be available at http://localhost:3000.
 
 ### Method 2: Manual Setup
@@ -112,7 +134,6 @@ npm run dev
 
 ```
 
-
 2. Frontend Setup:
 
 ```
@@ -127,11 +148,9 @@ npm run dev
 
 ```
 
-
-
 ## 🔑 Environment Variables
 
-Server (``server/.env``)
+Server (`server/.env`)
 
 ```
 PORT=5000
@@ -151,8 +170,8 @@ GEMINI_API_KEY=your_gemini_api_key
 CLIENT_URL=http://localhost:3000
 ```
 
+Client (`client/.env`)
 
-Client (``client/.env``)
 ```
 VITE_API_BASE_URL=http://localhost:5000/api
 
@@ -161,19 +180,17 @@ VITE_GOOGLE_CLIENT_ID=your_google_client_id
 VITE_UNSPLASH_ACCESS_KEY=your_unsplash_key
 ```
 
-
 ## 🧪 Testing
 
 To run the test suite (Unit & Integration):
+
 ```
 cd client
 npm test
 ```
-
 
 ## 👤 Author
 
 <h2>
  <a href="https://www.linkedin.com/in/san-shwe-sam-564a32169/" target="_blank">San Shwe (Sam)</a>
 </h2>
-
