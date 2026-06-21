@@ -1,4 +1,5 @@
-Setup Guide: Samwise PM Platform
+# Setup Guide: Samwise PM Platform
+
 This guide provides step-by-step instructions for setting up and running the Samwise project locally.
 
 ` You can run Samwise locally using either Docker (recommended) or npm.`

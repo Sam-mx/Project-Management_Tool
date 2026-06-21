@@ -42,8 +42,8 @@ For a detailed breakdown of the system design and management artifacts, please r
 
 ### 📋 Project Management Artifacts
 
-- [Work Breakdown Structure (WBS)](./docs/diagrams/wbs.png)
-- [Entity Relationship Diagram (ERD)](./docs/diagrams/erd.jpg)
+- [Work Breakdown Structure (WBS)](./docs/diagrams/WBS.png)
+- [Entity Relationship Diagram (ERD)](./docs/diagrams/ERD.jpg)
 - [System Sequence Diagram](./docs/diagrams/sequence.png)
 - [State Transition Diagram](./docs/diagrams/state.jpg)
 
