@@ -40,4 +40,4 @@ The project followed the **Project Management Life Cycle (PMLC)** to ensure acad
 - [Work Breakdown Structure (WBS)](./diagrams/WBS.png)
 - [System Sequence Diagram](./diagrams/sequence.png)
 - [High-Level Project Milestones (Summary Image)](./diagrams/gantt.png)
-- [Full Detailed Gantt Chart (Excel/PDF)](./artifacts/gantt.mpp)
+- [Full Detailed Gantt Chart (Microsoft Project)](./artifacts/gantt.mpp)
